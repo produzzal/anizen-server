@@ -220,6 +220,37 @@ app.delete("/api/anime/:id", async (req, res) => {
   }
 });
 
+// 👉 Add a new schedule
+app.post("/api/schedules", async (req, res) => {
+  try {
+    const schedule = req.body;
+
+    // Validate incoming data
+    if (!schedule.day || !schedule.time || !schedule.title || !schedule.type) {
+      return res.status(400).json({ error: "All fields are required!" });
+    }
+
+    // Insert schedule into the collection
+    const result = await db.collection("schedules").insertOne(schedule);
+
+    res.status(201).json({ message: "Schedule added!", id: result.insertedId });
+  } catch (error) {
+    console.error("Error adding schedule:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 👉 Get all schedules
+app.get("/api/schedules", async (req, res) => {
+  try {
+    const schedules = await db.collection("schedules").find().toArray();
+    res.json(schedules);
+  } catch (error) {
+    console.error("Error fetching schedules:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Start the server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
