@@ -140,7 +140,7 @@ app.post("/api/anime", async (req, res) => {
 // 👉 Get all animes
 app.get("/api/anime", async (req, res) => {
   try {
-    const animes = await animeCollection.find().toArray();
+    const animes = await animeCollection.find({ type: "anime" }).toArray();
     res.json(animes);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -247,6 +247,44 @@ app.get("/api/schedules", async (req, res) => {
     res.json(schedules);
   } catch (error) {
     console.error("Error fetching schedules:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post("/api/track-visitor", async (req, res) => {
+  try {
+    const now = new Date();
+    await db.collection("visitors").insertOne({ date: now });
+    res.status(200).json({ message: "Visitor Tracked" });
+  } catch (error) {
+    console.error("Error tracking visitor:", error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// 👉 Visitor Stats - Total, Today's, and Live Visitors
+app.get("/api/visitor-view", async (req, res) => {
+  try {
+    const collection = db.collection("visitors");
+    const now = new Date();
+    const todayStart = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate()
+    );
+    const fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000);
+
+    const total = await collection.countDocuments();
+    const today = await collection.countDocuments({
+      date: { $gte: todayStart },
+    });
+    const live = await collection.countDocuments({
+      date: { $gte: fiveMinutesAgo },
+    });
+
+    res.status(200).json({ total, today, live });
+  } catch (error) {
+    console.error("Error fetching visitor stats:", error);
     res.status(500).json({ error: error.message });
   }
 });
