@@ -147,6 +147,44 @@ app.get("/api/anime", async (req, res) => {
   }
 });
 
+// 👉 Get all movies
+app.get("/api/movie", async (req, res) => {
+  try {
+    const movies = await animeCollection.find({ type: "movie" }).toArray();
+    res.json(movies);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+// 👉 Get all animation & cartoon
+app.get("/api/animation&cartoon", async (req, res) => {
+  try {
+    const animationCartoon = await animeCollection
+      .find({ type: "animation & cartoon" })
+      .toArray();
+    res.json(animationCartoon);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+// 👉 Get all animation & cartoon
+app.get("/api/series", async (req, res) => {
+  try {
+    const tvSeries = await animeCollection.find({ type: "series" }).toArray();
+    res.json(tvSeries);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+app.get("/api/tv-show", async (req, res) => {
+  try {
+    const tvSeries = await animeCollection.find({ type: "tv-show" }).toArray();
+    res.json(tvSeries);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // 👉 Get a single anime by ID
 app.get("/api/anime/:id", async (req, res) => {
   try {
