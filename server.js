@@ -138,6 +138,15 @@ app.post("/api/anime", async (req, res) => {
 });
 
 // 👉 Get all animes
+app.get("/api/all-anime", async (req, res) => {
+  try {
+    const animes = await animeCollection.find().toArray();
+    res.json(animes);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.get("/api/anime", async (req, res) => {
   try {
     const animes = await animeCollection.find({ type: "anime" }).toArray();
